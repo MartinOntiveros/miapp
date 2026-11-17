@@ -1,0 +1,8 @@
+services:
+  app:
+    build: .
+    image: miapp:local
+    container_name: miapp
+    ports:
+      - "8081:80"
+    restart: unless-stopped
