@@ -1,0 +1,34 @@
+- name: Desplegar miapp
+  hosts: servidor
+  gather_facts: false
+  vars:
+    app_dir: "{{ lookup('env', 'HOME') }}/miapp"
+    app_tag: "latest"
+
+  tasks:
+    - name: Fijar la version a desplegar en .env
+      ansible.builtin.lineinfile:
+        path: "{{ app_dir }}/.env"
+        regexp: '^APP_TAG='
+        line: "APP_TAG={{ app_tag }}"
+
+    - name: Desplegar el servicio app
+      community.docker.docker_compose_v2:
+        project_src: "{{ app_dir }}"
+        services:
+          - app
+        pull: always
+        state: present
+
+    - name: Verificar que la app responde
+      ansible.builtin.uri:
+        url: http://localhost:8081
+        return_content: true
+      register: web
+      until: web.status == 200
+      retries: 5
+      delay: 3
+
+    - name: Mostrar lo desplegado
+      ansible.builtin.debug:
+        msg: "Version {{ app_tag }} desplegada y respondiendo"
