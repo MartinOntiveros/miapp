@@ -1,6 +1,6 @@
 services:
   app:
-    image: image: ghcr.io/martinontiveros/miapp:${APP_TAG:-latest} 
+    image: ghcr.io/martinontiveros/miapp:${APP_TAG:-latest} 
     container_name: miapp
     ports:
       - "8081:80"
